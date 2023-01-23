@@ -30,7 +30,7 @@ class UserPJServiceImpl(
     override fun updateUserPJ(userPJ: UserPJ): UserPJ {
         val username = getUsername()
         val usuario = userPJRepository.findByCnpj(username)
-        val encoder: BCryptPasswordEncoder = BCryptPasswordEncoder()
+        val encoder = BCryptPasswordEncoder()
         val senhaEncoder = encoder.encode(userPJ.senha)
 
         usuario.nome = userPJ.nome
@@ -46,7 +46,7 @@ class UserPJServiceImpl(
     }
 
     override fun cadastrarUserPJ(userPJ: UserPJ): UserPJ {
-        val encoder: BCryptPasswordEncoder = BCryptPasswordEncoder()
+        val encoder = BCryptPasswordEncoder()
         val senhaEncoder = encoder.encode(userPJ.senha)
         userPJ.senha = senhaEncoder
         return userPJRepository.save(userPJ)

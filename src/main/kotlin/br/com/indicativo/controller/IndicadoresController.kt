@@ -1,10 +1,7 @@
 package br.com.indicativo.controller
 
 import br.com.indicativo.model.Indicadores
-import br.com.indicativo.repository.IndicadoresRepository
 import br.com.indicativo.service.IndicadoresService
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -18,17 +15,11 @@ class IndicadoresController (
     ) {
 
     @GetMapping
-    fun getAllIndicadores(): List<Indicadores>{
-        return indicadoresRepository.getAllIndicadores()
-    }
+    fun getAllIndicadores(): List<Indicadores> = indicadoresRepository.getAllIndicadores()
 
     @GetMapping("/nomes/{nome}")
-    fun getAllIndicadoresByNome(@PathVariable nome: String): ResponseEntity<List<Indicadores>>{
-        return ResponseEntity(indicadoresRepository.getAllIndicadoresByNome(nome), HttpStatus.OK)
-    }
+    fun getAllIndicadoresByNome(@PathVariable nome: String): ResponseEntity<List<Indicadores>> = ResponseEntity.ok(indicadoresRepository.getAllIndicadoresByNome(nome))
 
     @GetMapping("{nome}")
-    fun getIndicadoresByNome(@PathVariable nome: String): ResponseEntity<Indicadores>{
-        return ResponseEntity(indicadoresRepository.getIndicadoresByNome(nome), HttpStatus.OK)
-    }
+    fun getIndicadoresByNome(@PathVariable nome: String): ResponseEntity<Indicadores> = ResponseEntity.ok(indicadoresRepository.getIndicadoresByNome(nome))
 }

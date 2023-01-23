@@ -1,6 +1,6 @@
 package br.com.indicativo.model
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.jetbrains.annotations.NotNull
 
@@ -9,10 +9,11 @@ import org.jetbrains.annotations.NotNull
 @Table(name = "Ativos")
 class Ativos {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long = 0
 
-    @Column(unique = true, nullable = false)
+    @NotNull
+    @Column(unique = true)
     var nome: String = ""
 
     @NotNull
@@ -63,9 +64,14 @@ class Ativos {
     @NotNull
     var dividendo: Double = 0.0
 
-    @ManyToOne(cascade = [CascadeType.ALL])
-    @JsonIgnoreProperties("ativosList")
-    var userpj: UserPJ = UserPJ()
+
+    @ManyToOne
+    @JsonIgnore
+    lateinit var userPJ: UserPJ
+
+    @OneToOne(orphanRemoval = true)
+    @JsonIgnore
+    lateinit var indicadores: Indicadores
 
 
 }

@@ -19,14 +19,10 @@ class CadastroController (
 
     //Cadastro pessoa juridica
     @PostMapping("cnpj")
-    fun cadastrarUserPJ(@RequestBody userPJ: UserPJ): ResponseEntity<UserPJ> {
-        return ResponseEntity.ok(userPJService.cadastrarUserPJ(userPJ))
-    }
+    fun cadastrarUserPJ(@RequestBody userPJ: UserPJ): ResponseEntity<UserPJ> = ResponseEntity.ok(userPJService.cadastrarUserPJ(userPJ))
 
     //Cadastro pessoa fisica
     @PostMapping("cpf")
-    fun cadastrarUserPF(@RequestBody userPF: UserPF): ResponseEntity<UserPF> {
-        return ResponseEntity.ok(userPfService.cadastrarUserPF(userPF))
-    }
+    fun cadastrarUserPF(@RequestBody userPF: UserPF): ResponseEntity<UserPF> = ResponseEntity.ok(userPfService.cadastrarUserPF(userPF))
 
 }

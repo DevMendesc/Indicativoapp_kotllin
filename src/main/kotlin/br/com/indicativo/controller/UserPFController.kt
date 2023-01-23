@@ -12,23 +12,19 @@ class UserPFController(
     private val userPfService: UserPfService
 ) {
 
-    fun getUsername(): String {
+    private final fun getUsername(): String {
         return SecurityContextHolder.getContext().authentication.principal.toString()
     }
+    val username = getUsername()
 
     @GetMapping
-    fun getUserPJByCpf(): ResponseEntity<UserPF> {
-        val username = getUsername()
-        return ResponseEntity.ok(userPfService.getUserPFByCnpj(username))
-    }
+    fun getUserPJByCpf(): ResponseEntity<UserPF> = ResponseEntity.ok(userPfService.getUserPFByCnpj(username))
 
     @PutMapping()
-    fun updateUserPf(@RequestBody userPF: UserPF): ResponseEntity<UserPF> =
-        ResponseEntity.ok(userPfService.updateUserPF(userPF))
+    fun updateUserPf(@RequestBody userPF: UserPF): ResponseEntity<UserPF> = ResponseEntity.ok(userPfService.updateUserPF(userPF))
 
     @DeleteMapping()
     fun deleteUserPf(): ResponseEntity<String> {
-        val username = getUsername()
         userPfService.deleteUserPF(username)
         return ResponseEntity.ok("Usuario deletado com sucesso")
     }

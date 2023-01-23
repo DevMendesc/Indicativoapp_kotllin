@@ -28,7 +28,7 @@ class UserPfServiceImpl (
     override fun updateUserPF(userPF: UserPF): UserPF {
         val username = getUsername()
         val usuario = userPFRepository.findByCpf(username)
-        val encoder: BCryptPasswordEncoder = BCryptPasswordEncoder()
+        val encoder = BCryptPasswordEncoder()
         val senhaEncoder = encoder.encode(userPF.senha)
 
         usuario.nome = userPF.nome
@@ -44,7 +44,7 @@ class UserPfServiceImpl (
     }
 
     override fun cadastrarUserPF(userPF: UserPF): UserPF {
-        val encoder: BCryptPasswordEncoder = BCryptPasswordEncoder()
+        val encoder = BCryptPasswordEncoder()
         val senhaEncoder = encoder.encode(userPF.senha)
         userPF.senha = senhaEncoder
         return userPFRepository.save(userPF)

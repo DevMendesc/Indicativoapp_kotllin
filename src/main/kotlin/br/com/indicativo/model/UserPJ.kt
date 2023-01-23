@@ -31,8 +31,8 @@ class UserPJ {
     var senha: String = ""
 
 
-    @OneToMany(mappedBy = "userpj")
-    @JsonIgnoreProperties("userpj")
-    val ativosList: MutableList<Ativos> = mutableListOf()
+    @OneToMany(mappedBy = "userPJ", cascade = [(CascadeType.ALL)], orphanRemoval = true)
+    @JsonIgnoreProperties("userPJ")
+    internal val ativosList: MutableList<Ativos> = mutableListOf()
 
 }
