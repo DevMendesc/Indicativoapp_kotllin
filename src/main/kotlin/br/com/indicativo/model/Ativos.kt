@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull
 
 @Entity
 @Table(name = "Ativos")
-class Ativos(
+data class Ativos(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long,
@@ -61,15 +61,15 @@ class Ativos(
 
     @NotNull
     var dividendo: Double,
-
+){
     @ManyToOne
     @JsonIgnore
-    var userPJ: UserPJ,
+    lateinit var userPJ: UserPJ
 
     @OneToOne(
         orphanRemoval = true,
         cascade = [CascadeType.ALL]
     )
     @JsonIgnore
-    var indicadores: Indicadores,
-)
+    lateinit var indicadores: Indicadores
+}

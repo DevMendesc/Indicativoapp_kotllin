@@ -31,6 +31,6 @@ data class UserPJ(
 
     @OneToMany(mappedBy = "userPJ", cascade = [(CascadeType.ALL)], orphanRemoval = true)
     @JsonIgnoreProperties("userPJ")
-    internal val ativosList: MutableList<Ativos>
+    internal val ativosList: MutableList<Ativos> = mutableListOf()
 
 )
