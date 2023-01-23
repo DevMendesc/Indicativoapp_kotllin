@@ -7,32 +7,30 @@ import javax.validation.constraints.Size
 
 @Entity
 @Table(name = "userPJ")
-class UserPJ {
-
+data class UserPJ(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Long = 0
+    val id: Long,
 
     @NotNull
     @Column(unique = true)
     @Size(min = 14, max =14)
-    val cnpj: String = ""
+    val cnpj: String,
 
     @NotNull
-    var nome: String = ""
+    var nome: String,
 
     @NotNull
-    var email: String = ""
+    var email: String,
 
     @NotNull
-    var telefone: String = ""
+    var telefone: String,
 
     @NotNull
-    var senha: String = ""
-
+    var senha: String,
 
     @OneToMany(mappedBy = "userPJ", cascade = [(CascadeType.ALL)], orphanRemoval = true)
     @JsonIgnoreProperties("userPJ")
-    internal val ativosList: MutableList<Ativos> = mutableListOf()
+    internal val ativosList: MutableList<Ativos>
 
-}
+)

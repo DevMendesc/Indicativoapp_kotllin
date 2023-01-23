@@ -7,74 +7,69 @@ import org.jetbrains.annotations.NotNull
 
 @Entity
 @Table(name = "Ativos")
-class Ativos {
+class Ativos(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Long = 0
-
+    val id: Long,
     @NotNull
     @Column(unique = true)
-    var nome: String = ""
+    var nome: String,
 
     @NotNull
-    var lucroPorAcao: Double = 0.0
+    var lucroPorAcao: Double,
 
     @NotNull
-    var dividaTotal: Double = 0.0
+    var dividaTotal: Double,
 
     @NotNull
-    var caixaEEquivalentes: Double = 0.0
+    var caixaEEquivalentes: Double,
 
     @NotNull
-    var receitaLiquida: Double = 0.0
+    var receitaLiquida: Double,
+    @NotNull
+    var lucroLiquido: Double,
 
     @NotNull
-    var lucroLiquido: Double = 0.0
+    var lucroOperacionalLiquido: Double,
 
     @NotNull
-    var lucroOperacionalLiquido: Double = 0.0
+    var acoesTotais: Double,
 
     @NotNull
-    var acoesTotais: Double = 0.0
+    var cotacaoAcao: Double,
 
     @NotNull
-    var cotacaoAcao: Double = 0.0
+    var precoAcao: Double,
 
     @NotNull
-    var precoAcao: Double = 0.0
+    var valorPatrimonialPorAcao: Double,
 
     @NotNull
-    var valorPatrimonialPorAcao: Double = 0.0
+    var patrimonioLiquido: Double,
 
     @NotNull
-    var patrimonioLiquido: Double = 0.0
+    var impostos: Double,
 
     @NotNull
-    var impostos: Double = 0.0
+    var juros: Double,
 
     @NotNull
-    var juros: Double = 0.0
+    var depreciacao: Double,
 
     @NotNull
-    var depreciacao: Double = 0.0
+    var amortizacao: Double,
 
     @NotNull
-    var amortizacao: Double = 0.0
-
-    @NotNull
-    var dividendo: Double = 0.0
-
+    var dividendo: Double,
 
     @ManyToOne
     @JsonIgnore
-    var userPJ: UserPJ = UserPJ()
+    var userPJ: UserPJ,
 
     @OneToOne(
         orphanRemoval = true,
         cascade = [CascadeType.ALL]
     )
     @JsonIgnore
-    var indicadores: Indicadores = Indicadores()
-
-
-}
+    var indicadores: Indicadores,
+)
