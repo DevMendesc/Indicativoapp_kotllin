@@ -15,4 +15,6 @@ interface AtivosService {
     fun updateAtivosByNome(ativos: Ativos, nome: String): Ativos
 
     fun deleteAtivos(nome: String)
+
+   // fun verificaAtivos(nome: String): Boolean
 }

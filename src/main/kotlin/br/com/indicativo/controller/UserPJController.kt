@@ -12,20 +12,19 @@ class UserPJController(
     private val userPJService: UserPJService
 ) {
 
-    private final fun getUsername(): String {
+    fun getUsername(): String {
         return SecurityContextHolder.getContext().authentication.principal.toString()
     }
-    val username = getUsername()
 
     @GetMapping
-    fun getUserPJByCnpj(): ResponseEntity<UserPJ> = ResponseEntity.ok(userPJService.getUserPJByCnpj(username))
+    fun getUserPJByCnpj(): ResponseEntity<UserPJ> = ResponseEntity.ok(userPJService.getUserPJByCnpj(getUsername()))
 
     @PutMapping()
     fun updateUserPJ(@RequestBody userPJ: UserPJ): ResponseEntity<UserPJ> = ResponseEntity.ok(userPJService.updateUserPJ(userPJ))
 
     @DeleteMapping()
     fun deleteUserPJ():ResponseEntity<String> {
-        userPJService.deleteUserPJ(username)
+        userPJService.deleteUserPJ(getUsername())
         return ResponseEntity.ok("Usuario deletado com sucesso")
     }
 

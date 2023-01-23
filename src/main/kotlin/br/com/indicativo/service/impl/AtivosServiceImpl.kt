@@ -2,7 +2,6 @@ package br.com.indicativo.service.impl
 
 import br.com.indicativo.model.Ativos
 import br.com.indicativo.model.Indicadores
-import br.com.indicativo.model.UserPJ
 import br.com.indicativo.repository.AtivosRepository
 import br.com.indicativo.repository.IndicadoresRepository
 import br.com.indicativo.repository.UserPJRepository
@@ -13,174 +12,177 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class AtivosServiceImpl(
-    val ativosRepository: AtivosRepository,
-    val indicadoresRepository: IndicadoresRepository,
-    val userPJRepository: UserPJRepository
+    private val ativosRepository: AtivosRepository,
+    private val indicadoresRepository: IndicadoresRepository,
+    private val userPJRepository: UserPJRepository
 ) : AtivosService {
 
-    override fun getAllAtivosByCnpj(cnpj: String): List<Ativos> {
-        val pj: UserPJ = userPJRepository.findByCnpj(cnpj)
-        return pj.ativosList
-    }
+    override fun getAllAtivosByCnpj(cnpj: String): List<Ativos> = userPJRepository.findByCnpj(cnpj).ativosList
 
-    override fun getAtivosById(id: Long): Ativos {
-        return ativosRepository.findById(id).orElseThrow { RuntimeException() }
-    }
+    override fun getAtivosById(id: Long): Ativos = ativosRepository.findById(id).orElseThrow{RuntimeException()}
 
-    override fun getAtivosByNome(nome: String): List<Ativos> {
-        return ativosRepository.findByNomeContainingIgnoreCase(nome)
-    }
+    override fun getAtivosByNome(nome: String): List<Ativos> = ativosRepository.findByNomeContainingIgnoreCase(nome)
 
     override fun saveAtivos(cnpj: String, ativos: Ativos): Ativos {
+        val indicador = Indicadores()
+        ativos.userPJ = userPJRepository.findByCnpj(cnpj)
+        ativos.indicadores = indicador
 
-        val pj: UserPJ = userPJRepository.findByCnpj(cnpj)
+        indicador.apply {
+            nome = ativos.nome
 
-        val indicadores = Indicadores()
+            pl = indicador.plResult(
+                precoAcao = ativos.precoAcao,
+                lucroPorAcao = ativos.lucroPorAcao
+            )
 
-        indicadores.nome = ativos.nome
+            roe = indicador.roeResult(
+                lucroLiquido = ativos.lucroLiquido,
+                patrimonioLiquido = ativos.patrimonioLiquido
+            )
 
-        indicadores.pl = indicadores.plResult(
-            precoAcao = ativos.precoAcao,
-            lucroPorAcao = ativos.lucroPorAcao
-        )
+            pvpa = indicador.pvpaResult(
+                precoAcao = ativos.precoAcao,
+                valorPatrimonialPorAcao = ativos.valorPatrimonialPorAcao
+            )
 
-        indicadores.roe = indicadores.roeResult(
-            lucroLiquido = ativos.lucroLiquido,
-            patrimonioLiquido = ativos.patrimonioLiquido
-        )
+            ev = indicador.evResult(
+                cotacaoAcao = ativos.cotacaoAcao,
+                acoesTotais = ativos.acoesTotais,
+                dividaTotal = ativos.dividaTotal,
+                caixaEEquivalentes = ativos.caixaEEquivalentes
+            )
 
-        indicadores.pvpa = indicadores.pvpaResult(
-            precoAcao = ativos.precoAcao,
-            valorPatrimonialPorAcao = ativos.valorPatrimonialPorAcao
-        )
+            ebitda = indicador.ebitdaResult(
+                lucroOperacionalLiquido = ativos.lucroOperacionalLiquido,
+                juros = ativos.juros,
+                impostos = ativos.impostos,
+                depreciacao = ativos.depreciacao,
+                amortizacao = ativos.amortizacao
+            )
 
-        indicadores.ev = indicadores.evResult(
-            cotacaoAcao = ativos.cotacaoAcao,
-            acoesTotais = ativos.acoesTotais,
-            dividaTotal = ativos.dividaTotal,
-            caixaEEquivalentes = ativos.caixaEEquivalentes
-        )
+            evebitda = indicador.evEbitdaResult(
+                cotacaoAcao = ativos.cotacaoAcao,
+                acoesTotais = ativos.acoesTotais,
+                dividaTotal = ativos.dividaTotal,
+                caixaEEquivalentes = ativos.caixaEEquivalentes,
+                lucroOperacionalLiquido = ativos.lucroOperacionalLiquido,
+                juros = ativos.juros,
+                impostos = ativos.impostos,
+                depreciacao = ativos.depreciacao,
+                amortizacao = ativos.amortizacao
+            )
 
-        indicadores.ebitda = indicadores.ebitdaResult(
-            lucroOperacionalLiquido = ativos.lucroOperacionalLiquido,
-            juros = ativos.juros,
-            impostos = ativos.impostos,
-            depreciacao = ativos.depreciacao,
-            amortizacao = ativos.amortizacao
-        )
+            dividendYield = indicador.dividendYieldResult(
+                dividendo = ativos.dividendo,
+                precoAcao = ativos.precoAcao
+            )
 
-        indicadores.evebitda = indicadores.evEbitdaResult(
-            cotacaoAcao = ativos.cotacaoAcao,
-            acoesTotais = ativos.acoesTotais,
-            dividaTotal = ativos.dividaTotal,
-            caixaEEquivalentes = ativos.caixaEEquivalentes,
-            lucroOperacionalLiquido = ativos.lucroOperacionalLiquido,
-            juros = ativos.juros,
-            impostos = ativos.impostos,
-            depreciacao = ativos.depreciacao,
-            amortizacao = ativos.amortizacao
-        )
-
-        indicadores.dividendYield = indicadores.dividendYieldResult(
-            dividendo = ativos.dividendo,
-            precoAcao = ativos.precoAcao
-        )
-
-        indicadores.lpa = indicadores.lpaResult(
-            lucroLiquido = ativos.lucroLiquido,
-            acoesTotais = ativos.acoesTotais
-        )
-
-        ativos.userPJ = pj
-        ativos.indicadores = indicadores
-
-        indicadoresRepository.save(indicadores)
+            lpa = indicador.lpaResult(
+                lucroLiquido = ativos.lucroLiquido,
+                acoesTotais = ativos.acoesTotais
+            )
+        }
+        indicadoresRepository.save(indicador)
         return ativosRepository.save(ativos)
     }
 
-    override fun updateAtivosByNome(ativos: Ativos, nome: String): Ativos {
+    override fun updateAtivosByNome(ativos: Ativos, name: String): Ativos{
+        val existingAtivos: Ativos = ativosRepository.findByNome(name)
+        val indicador: Indicadores = indicadoresRepository.findByNome(name)
 
-        val ativo: Ativos = ativosRepository.findByNome(nome)
-        val indicadores: Indicadores = indicadoresRepository.findByNome(nome)
-        val atualizacaoAtivo: Ativos = ativo.apply {
-            ativo.nome = ativo.nome
-            ativo.lucroPorAcao = ativo.lucroPorAcao
-            ativo.dividaTotal = ativo.dividaTotal
-            ativo.caixaEEquivalentes = ativo.caixaEEquivalentes
-            ativo.receitaLiquida = ativo.receitaLiquida
-            ativo.lucroLiquido = ativo.lucroLiquido
-            ativo.lucroOperacionalLiquido = ativo.lucroOperacionalLiquido
-            ativo.acoesTotais = ativo.acoesTotais
-            ativo.cotacaoAcao = ativo.cotacaoAcao
-            ativo.precoAcao = ativo.precoAcao
-            ativo.valorPatrimonialPorAcao = ativo.valorPatrimonialPorAcao
-            ativo.patrimonioLiquido = ativo.patrimonioLiquido
-            ativo.impostos = ativo.impostos
-            ativo.juros = ativo.juros
-            ativo.depreciacao = ativo.depreciacao
-            ativo.amortizacao = ativo.amortizacao
-            ativo.dividendo = ativo.dividendo
+        existingAtivos.apply {
+            nome = ativos.nome
+            lucroPorAcao = ativos.lucroPorAcao
+            dividaTotal = ativos.dividaTotal
+            caixaEEquivalentes = ativos.caixaEEquivalentes
+            receitaLiquida = ativos.receitaLiquida
+            lucroLiquido = ativos.lucroLiquido
+            lucroOperacionalLiquido = ativos.lucroOperacionalLiquido
+            acoesTotais = ativos.acoesTotais
+            cotacaoAcao = ativos.cotacaoAcao
+            precoAcao = ativos.precoAcao
+            valorPatrimonialPorAcao = ativos.valorPatrimonialPorAcao
+            patrimonioLiquido = ativos.patrimonioLiquido
+            impostos = ativos.impostos
+            juros = ativos.juros
+            depreciacao = ativos.depreciacao
+            amortizacao = ativos.amortizacao
+            dividendo = ativos.dividendo
         }
-        val atualizacaoIndicador: Indicadores = indicadores.apply {
-            indicadores.nome = ativo.nome
-            indicadores.pl = indicadores.plResult(
-                precoAcao = ativo.precoAcao,
-                lucroPorAcao = ativo.lucroPorAcao
-            )
-            indicadores.roe = indicadores.roeResult(
-                lucroLiquido = ativo.lucroLiquido,
-                patrimonioLiquido = ativo.patrimonioLiquido
+
+        indicador.apply {
+            nome = ativos.nome
+
+            pl = indicador.plResult(
+                precoAcao = ativos.precoAcao,
+                lucroPorAcao = ativos.lucroPorAcao
             )
 
-            indicadores.pvpa = indicadores.pvpaResult(
-                precoAcao = ativo.precoAcao,
-                valorPatrimonialPorAcao = ativo.valorPatrimonialPorAcao
+            roe = indicador.roeResult(
+                lucroLiquido = ativos.lucroLiquido,
+                patrimonioLiquido = ativos.patrimonioLiquido
             )
 
-            indicadores.ev = indicadores.evResult(
-                cotacaoAcao = ativo.cotacaoAcao,
-                acoesTotais = ativo.acoesTotais,
-                dividaTotal = ativo.dividaTotal,
-                caixaEEquivalentes = ativo.caixaEEquivalentes
+            pvpa = indicador.pvpaResult(
+                precoAcao = ativos.precoAcao,
+                valorPatrimonialPorAcao = ativos.valorPatrimonialPorAcao
             )
 
-            indicadores.ebitda = indicadores.ebitdaResult(
-                lucroOperacionalLiquido = ativo.lucroOperacionalLiquido,
-                juros = ativo.juros,
-                impostos = ativo.impostos,
-                depreciacao = ativo.depreciacao,
-                amortizacao = ativo.amortizacao
+            ev = indicador.evResult(
+                cotacaoAcao = ativos.cotacaoAcao,
+                acoesTotais = ativos.acoesTotais,
+                dividaTotal = ativos.dividaTotal,
+                caixaEEquivalentes = ativos.caixaEEquivalentes
             )
 
-            indicadores.evebitda = indicadores.evEbitdaResult(
-                cotacaoAcao = ativo.cotacaoAcao,
-                acoesTotais = ativo.acoesTotais,
-                dividaTotal = ativo.dividaTotal,
-                caixaEEquivalentes = ativo.caixaEEquivalentes,
-                lucroOperacionalLiquido = ativo.lucroOperacionalLiquido,
-                juros = ativo.juros,
-                impostos = ativo.impostos,
-                depreciacao = ativo.depreciacao,
-                amortizacao = ativo.amortizacao
+            ebitda = indicador.ebitdaResult(
+                lucroOperacionalLiquido = ativos.lucroOperacionalLiquido,
+                juros = ativos.juros,
+                impostos = ativos.impostos,
+                depreciacao = ativos.depreciacao,
+                amortizacao = ativos.amortizacao
             )
 
-            indicadores.dividendYield = indicadores.dividendYieldResult(
-                dividendo = ativo.dividendo,
-                precoAcao = ativo.precoAcao
+            evebitda = indicador.evEbitdaResult(
+                cotacaoAcao = ativos.cotacaoAcao,
+                acoesTotais = ativos.acoesTotais,
+                dividaTotal = ativos.dividaTotal,
+                caixaEEquivalentes = ativos.caixaEEquivalentes,
+                lucroOperacionalLiquido = ativos.lucroOperacionalLiquido,
+                juros = ativos.juros,
+                impostos = ativos.impostos,
+                depreciacao = ativos.depreciacao,
+                amortizacao = ativos.amortizacao
             )
 
-            indicadores.lpa = indicadores.lpaResult(
-                lucroLiquido = ativo.lucroLiquido,
-                acoesTotais = ativo.acoesTotais
+            dividendYield = indicador.dividendYieldResult(
+                dividendo = ativos.dividendo,
+                precoAcao = ativos.precoAcao
+            )
+
+            lpa = indicador.lpaResult(
+                lucroLiquido = ativos.lucroLiquido,
+                acoesTotais = ativos.acoesTotais
             )
         }
-        indicadoresRepository.save(atualizacaoIndicador)
-        ativosRepository.save(atualizacaoAtivo)
-
-        return ativo
+        indicadoresRepository.save(indicador)
+        ativosRepository.save(existingAtivos)
+        return existingAtivos
     }
 
-    override fun deleteAtivos(nome: String) {
-        ativosRepository.deleteByNome(nome)
+    override fun deleteAtivos(nome: String) = ativosRepository.deleteByNome(nome)
+/*
+    override fun verificaAtivos(nome: String): Boolean {
+        val usuario = userPJRepository.findByCnpj(getUsername())
+        usuario.ativosList.forEach { if (nome == it.nome) return true }
+        return false
     }
+    fun getUsername(): String {
+        return SecurityContextHolder.getContext().authentication.principal.toString()
+    }
+
+ */
+
+
 }

@@ -67,11 +67,14 @@ class Ativos {
 
     @ManyToOne
     @JsonIgnore
-    lateinit var userPJ: UserPJ
+    var userPJ: UserPJ = UserPJ()
 
-    @OneToOne(orphanRemoval = true)
+    @OneToOne(
+        orphanRemoval = true,
+        cascade = [CascadeType.ALL]
+    )
     @JsonIgnore
-    lateinit var indicadores: Indicadores
+    var indicadores: Indicadores = Indicadores()
 
 
 }

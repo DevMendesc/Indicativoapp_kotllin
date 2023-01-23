@@ -18,10 +18,10 @@ class AtivosController (
     val ativosService: AtivosService
 ) {
 
-    private final fun getUsername(): String {
+    fun getUsername(): String {
         return SecurityContextHolder.getContext().authentication.principal.toString()
     }
-    val username = getUsername()
+
 
     @GetMapping
     @Operation(
@@ -29,7 +29,7 @@ class AtivosController (
         description = ("Apresentação de todos os ativos cadastrados pela empresa responsavel"),
         tags = ["ativos"]
     )
-    fun getAllAtivos(): List<Ativos> = ativosService.getAllAtivosByCnpj(username)
+    fun getAllAtivos(): List<Ativos> = ativosService.getAllAtivosByCnpj(getUsername())
 
     @GetMapping("{id}")
     fun getAtivosById(@PathVariable id: Long): ResponseEntity<Ativos> = ResponseEntity.ok(ativosService.getAtivosById(id))
@@ -38,7 +38,7 @@ class AtivosController (
     fun getAtivosByNome(@PathVariable nome: String): ResponseEntity<List<Ativos>> = ResponseEntity.ok(ativosService.getAtivosByNome(nome))
 
     @PostMapping
-    fun saveAtivos(@RequestBody ativos: Ativos): ResponseEntity<Ativos> = ResponseEntity.ok(ativosService.saveAtivos(username, ativos))
+    fun saveAtivos(@RequestBody ativos: Ativos): ResponseEntity<Ativos> = ResponseEntity.ok(ativosService.saveAtivos(getUsername(), ativos))
 
     @PutMapping("{nome}")
     fun updateAtivos(@PathVariable nome: String, @RequestBody ativos: Ativos): ResponseEntity<Ativos> = ResponseEntity.ok(ativosService.updateAtivosByNome(ativos, nome))
